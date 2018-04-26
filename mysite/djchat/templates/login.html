@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %} Вход {% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+<p><button type="submit" style="display: table; margin: 0 auto">Войти</button></p>
+<p><a href="{% url 'register' %}" style="display: table; margin: 0 auto"><button type="button">Зарегистрироваться</button></a></p>
+{% endblock %}

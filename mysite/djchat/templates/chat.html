@@ -1,0 +1,86 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
+    <title>Вебсокетный чат</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+    <script>
+        $(function() {
+          var conn = null;
+
+          function log(msg) {
+            var control = $('#log');
+            control.html(control.html() + msg + '<br/>');
+            control.scrollTop(control.scrollTop() + 1000);
+          }
+
+          function connect() {
+            disconnect();
+            conn = new SockJS('http://127.0.0.1:8080/chat', ['websocket','xhr-streaming','iframe-eventsource','iframe-htmlfile','xhr-polling','iframe-xhr-polling','jsonp-polling']);
+            log('Connecting...');
+            conn.onopen = function() {
+              log('Connected. (' + conn.protocol + ')');
+            };
+
+            conn.onmessage = function(e) {
+              log(e.data);
+            };
+
+            conn.onclose = function() {
+              log('Disconnected.');
+              conn = null;
+            };
+          }
+
+          function disconnect() {
+            if (conn != null) {
+              log('Disconnecting...');
+
+              conn.close();
+              conn = null;
+            }
+          }
+
+          $('form').submit(function() {
+            var text = '{{ user }}: ' + $('#text').val();
+            //log('Sending: ' + text);
+            conn.send(text);
+            $('#text').val('').focus();
+            return false;
+          });
+          window.onload=connect()
+        });
+    </script>
+</head>
+<body>
+    <div class="parent">
+        <div class="outer">
+            <div>
+                <p>
+                <b>{{ user }}</b>&nbsp;&nbsp;
+                {% if user.is_anonymous %}
+                <a href="{% url 'login' %}"><button type="button">Войти</button></a>
+                {% else %}
+                <a href="{% url 'logout' %}"><button type="button">Выйти</button></a>
+                {% endif %}
+                </p>
+            </div>
+            <div id="log" style="width: 60em; height: 20em; overflow:auto; border: 1px solid black; background: #ffffff">
+            </div>
+            {% if user.is_authenticated %}
+            <p>
+            <form id="chatform">
+                <input id="text" type="text" style="width: 51em;"/>
+                <input type="submit" value="Отправить" />
+            </form>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
