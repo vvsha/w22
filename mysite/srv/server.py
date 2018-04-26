@@ -44,8 +44,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         port = sys.argv[1]
     else:
-# ///        port = 8080
-        port = 9000
+        port = 8180
     ChatRouter = sockjs.tornado.SockJSRouter(ChatConnection, '/chat')
     app = tornado.web.Application(ChatRouter.urls)
     app.listen(port)

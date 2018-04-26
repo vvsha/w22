@@ -21,7 +21,7 @@
 
           function connect() {
             disconnect();
-            conn = new SockJS('http://127.0.0.1:8080/chat', ['websocket','xhr-streaming','iframe-eventsource','iframe-htmlfile','xhr-polling','iframe-xhr-polling','jsonp-polling']);
+            conn = new SockJS('http://127.0.0.1:8180/chat', ['websocket','xhr-streaming','iframe-eventsource','iframe-htmlfile','xhr-polling','iframe-xhr-polling','jsonp-polling']);
             log('Connecting...');
             conn.onopen = function() {
               log('Connected. (' + conn.protocol + ')');
